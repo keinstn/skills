@@ -52,12 +52,20 @@ memory — tool versions and MCP servers change fast.
 4. **Task runner** — recipes for install, lint, format, test, run, and an
    aggregate `check`, using the ecosystem's idiomatic runner and the project's
    *real* commands (never invent a command that isn't this stack's idiom).
-5. **Claude Code PostToolUse format hook** (`.claude/hooks/format-on-edit.sh` +
-   `.claude/settings.json`) — format the edited file by extension with this
-   stack's formatter; keep it silent/best-effort (always exit 0). Don't
-   reimplement what the formatter already does — verify any workaround against the
-   project's actual config before adding it.
-6. **Running-app / language MCP server** (`.mcp.json`) — *only if it fits*: an
+5. **Claude Code PostToolUse format hook (agent-facing)**
+   (`.claude/hooks/format-on-edit.sh` + `.claude/settings.json`) — format the
+   edited file by extension with this stack's formatter; keep it silent/best-effort
+   (always exit 0). Don't reimplement what the formatter already does — verify any
+   workaround against the project's actual config before adding it.
+6. **Git hooks (pre-commit / pre-push)** — *only if the user wants commit-time
+   enforcement*: wire hooks that call the existing task-runner recipes (pillar 4),
+   never new check logic. Split by cost — pre-commit runs fast checks on staged
+   files (format + lint), pre-push runs the heavy suite (tests). Use the stack's
+   idiomatic hook manager (research current options; don't hardcode one). Hooks are
+   bypassable (`--no-verify`) and local-only, so they're early feedback, not a gate
+   — CI (pillar 8) stays the real gate. Confirm before making anything blocking: it
+   changes every contributor's commit/push, not just this repo.
+7. **Running-app / language MCP server** (`.mcp.json`) — *only if it fits*: an
    official language server (e.g. `dart mcp-server`) where one exists, and/or
    something that inspects a running instance (a browser MCP for a web frontend,
    `marionette_mcp` for Flutter). Skip entirely for a library/CLI with nothing to
@@ -65,15 +73,15 @@ memory — tool versions and MCP servers change fast.
    project's choice onto a different one. If wiring it up requires a global host
    install (`dart pub global activate ...`, `npm i -g ...`), confirm with the
    user first — it changes their machine, not just this repo — and record the
-   one-time command in the setup doc (pillar 9) regardless.
-7. **CI** (the project's CI platform, path-filtered per sub-project) — the stack's
+   one-time command in the setup doc (pillar 10) regardless.
+8. **CI** (the project's CI platform, path-filtered per sub-project) — the stack's
    standard setup step, reading the pinned version from the project's own pin file
    rather than hardcoding one that drifts from local dev. Enable dependency/SDK
    caching unless there's a reason not to.
-8. **Tests** — confirm the test runner actually runs and passes on a trivial case;
+9. **Tests** — confirm the test runner actually runs and passes on a trivial case;
    add a test helper mirroring this project's conventions only once a real case
    justifies it (don't scaffold empty dirs or unused parameters).
-9. **Setup doc** — a minimal `CLAUDE.md`/`README` covering one-time host setup
+10. **Setup doc** — a minimal `CLAUDE.md`/`README` covering one-time host setup
    (SDK/version manager, any globally-activated tools the harness assumes) so a
    fresh clone is usable. Setup only — not a product/architecture doc.
 
@@ -114,5 +122,7 @@ memory — tool versions and MCP servers change fast.
 - Copy a reference project's file verbatim without checking it's still accurate
   for *this* project's actual config (e.g. a hook tuned to another project's
   `page_width` setting is dead code here if this project sets none).
-- Expand the setup doc (pillar 9) into a product or architecture doc — keep it to
+- Expand the setup doc (pillar 10) into a product or architecture doc — keep it to
   one-time setup.
+- Stuff a slow test suite into pre-commit or make hooks blocking without asking —
+  it drags every commit and isn't a substitute for CI.
