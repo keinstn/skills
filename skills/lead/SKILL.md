@@ -53,9 +53,12 @@ units serially yourself in the main loop.
 
    | Host | Spawn primitive | Cheaper model | Isolation |
    |------|-----------------|---------------|-----------|
-   | Claude Code | Agent tool (`subagent_type: "implementer"`) | `model:` in the agent / call | `isolation: "worktree"` |
+   | Claude Code | Agent tool (`subagent_type: "general-purpose"`) | `model:` in the call | `isolation: "worktree"` |
    | Codex | `spawn_agent` + `send_message`/`wait_agent` | best-effort per-spawn `model`/`reasoning_effort` override, where exposed and available (use a **non-full-history** spawn; validated against the model catalog) | none — workers share the workspace |
    | Copilot CLI | the `task` tool | `task` `model` override | none by default |
+
+   Use your host's **built-in** general subagent — the inline contract carries
+   the full unit definition, so no custom agent setup is required.
 
    `pi`'s subagents run as separate OS processes — the cross-process path this
    skill avoids. Unless your pi setup treats them as native in-session
