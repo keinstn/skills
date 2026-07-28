@@ -11,6 +11,9 @@ subagents, live elsewhere and are intentionally not published here.)
 ## Skills
 
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
+- **git-retro** — Turn a period of GitHub activity into a personal
+  development retrospective, combining a data digest with follow-up
+  questions to surface context the data alone can't.
 - **harness** — Set up a project's dev tooling (gitignore, lint/format config,
   task runner, CI, hooks, tests) for whatever language the project uses.
 - **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
