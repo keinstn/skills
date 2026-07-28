@@ -15,6 +15,8 @@ subagents, live elsewhere and are intentionally not published here.)
   task runner, CI, hooks, tests) for whatever language the project uses.
 - **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
   implementation to subagents, and review.
+- **review-herdr** — Delegate code review to a new agent in a separate Herdr
+  pane, for an independent second opinion from a different provider.
 - **ship** — Implement in a worktree, verify locally, then commit/push/PR and
   review the diff.
 - **ship-herdr** — Delegate the `ship` workflow to a new agent in a separate
