@@ -46,12 +46,14 @@ session. Do not attempt any of the steps below outside Herdr.
    keeps worktree/branch ownership unambiguous: only the delegated agent may
    write inside this directory from this point on; you must not.
 
-2. **Choose a report path** the child will write its completion summary to,
-   e.g. `<worktree>/.ship-herdr-report.json`. Passing this path in the prompt
-   (next step) turns "the agent said it's done" into a file you can check,
-   instead of scraped pane text — pane output can sit on the terminal's
-   alternate screen and never reach scrollback, so anything you need to keep
-   must not depend on reading the pane alone.
+2. **Choose a report path outside the worktree** (e.g. `$(mktemp -t
+   ship-herdr-report)`) the child will write its completion summary to.
+   Keeping it outside the worktree means it survives even if the worktree is
+   later removed, and can't be swept into the child's own `git add`. Passing
+   this path in the prompt (next step) turns "the agent said it's done" into
+   a file you can check, instead of scraped pane text — pane output can sit
+   on the terminal's alternate screen and never reach scrollback, so anything
+   you need to keep must not depend on reading the pane alone.
 
 3. **Split a pane and start the agent** (plain shell CLI, no Claude-only
    primitive):
@@ -73,6 +75,10 @@ session. Do not attempt any of the steps below outside Herdr.
    ```bash
    herdr agent prompt <name> "<the prompt above>" --wait --timeout 120000
    ```
+   This `--wait` only confirms the prompt was accepted and the agent settled
+   into a state (submit-and-settle handshake) — on a fast agent it can return
+   `idle` long before the ship work is actually done. It is not a completion
+   check; step 5 is.
 
 5. **Drive the wait/triage loop — this is the spine of the skill, not a
    single call.** `agent prompt --wait` only settles on the *lifecycle*
