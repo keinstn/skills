@@ -13,6 +13,12 @@ subagents, live elsewhere and are intentionally not published here.)
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
 - **harness** — Set up a project's dev tooling (gitignore, lint/format config,
   task runner, CI, hooks, tests) for whatever language the project uses.
+- **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
+  implementation to subagents, and review.
+- **ship** — Implement in a worktree, verify locally, then commit/push/PR and
+  review the diff.
+- **ship-herdr** — Delegate the `ship` workflow to a new agent in a separate
+  Herdr pane, for a different provider (e.g. codex) or a live-steerable pane.
 - **worktree** — Create a git worktree adjacent to the current repo before
   starting implementation.
 
