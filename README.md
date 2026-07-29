@@ -14,6 +14,9 @@ subagents, live elsewhere and are intentionally not published here.)
   Herdr pane, for an independent second opinion from a different provider
   before implementing.
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
+- **flutter-ios-screenshots** — Capture App Store screenshots of a Flutter app
+  on an iOS simulator at the size App Store Connect requires, with a clean
+  status bar and no debug artifacts.
 - **git-retro** — Turn a period of GitHub activity into a personal
   development retrospective, combining a data digest with follow-up
   questions to surface context the data alone can't.
