@@ -1,6 +1,6 @@
 ---
 name: review-herdr
-description: Delegate code review to a new agent in a separate Herdr pane — use to get an independent second opinion from a different provider (e.g. codex) on a diff or PR. Read-only — findings only, no fixes. Requires running inside a Herdr-managed pane. Use when asked to review via herdr or get a second opinion from another agent (e.g. "herdr で review して", "codex にレビューさせて", "別 agent に second opinion 聞いて").
+description: Delegate review of a diff or PR to a new agent in a separate Herdr pane — use to get an independent second opinion from a different provider (e.g. codex) on that diff or PR. Read-only — findings only, no fixes. Requires running inside a Herdr-managed pane. Use when asked to review a diff or PR via herdr (e.g. "herdr で review して", "codex にレビューさせて", "この diff を別agentに見てもらって"). For a plan or decision instead of a diff, see `advise-herdr`.
 ---
 
 # Review via Herdr
@@ -105,4 +105,6 @@ the steps below outside Herdr.
   host's built-in review mechanism instead.
 - The task also requires fixes, not just findings — use `ship-herdr` (or do
   it yourself) instead; keep this skill read-only.
+- There's no diff or PR yet — you want a second opinion on a plan or decision
+  before implementing. Use `advise-herdr` instead.
 - You are not running inside Herdr (see Prerequisite).

@@ -89,3 +89,6 @@ units serially yourself in the main loop.
   do it in the main loop.
 - Linear single-unit tasks with little to decompose or parallelize — the
   orchestration overhead buys nothing.
+- You want a different provider to sanity-check the design itself before
+  delegating — `lead` *produces* a design/decomposition; `advise-herdr`
+  *checks* one you already have, from an outside perspective.
