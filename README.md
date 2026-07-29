@@ -10,6 +10,9 @@ subagents, live elsewhere and are intentionally not published here.)
 
 ## Skills
 
+- **advise-herdr** — Delegate a plan or decision to a new agent in a separate
+  Herdr pane, for an independent second opinion from a different provider
+  before implementing.
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
 - **git-retro** — Turn a period of GitHub activity into a personal
   development retrospective, combining a data digest with follow-up
