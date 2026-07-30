@@ -88,7 +88,8 @@ units serially yourself in the main loop.
 - Work that needs the upper model's full capability on every step — then just
   do it in the main loop.
 - Linear single-unit tasks with little to decompose or parallelize — the
-  orchestration overhead buys nothing.
+  orchestration overhead buys nothing; use `delegate` to hand off a single
+  bounded piece of work instead.
 - You want a different provider to sanity-check the design itself before
   delegating — `lead` *produces* a design/decomposition; `advise-herdr`
   *checks* one you already have, from an outside perspective.
