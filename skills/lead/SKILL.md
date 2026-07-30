@@ -84,7 +84,8 @@ units serially yourself in the main loop.
 ## When NOT to use this
 
 - Trivial one-shot edits — the delegation overhead isn't worth it.
-- Pure research/Q&A with nothing to implement.
+- Pure research/Q&A with nothing to implement — see `delegate` for
+  delegating that kind of inquiry work instead.
 - Work that needs the upper model's full capability on every step — then just
   do it in the main loop.
 - Linear single-unit tasks with little to decompose or parallelize — the
