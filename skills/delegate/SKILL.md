@@ -1,122 +1,131 @@
 ---
 name: delegate
-description: Act as lead for inquiry work — decompose a research or brainstorming question into independent angles, delegate each to a subagent, and synthesize the reconciled answer. Use when asked to delegate research, investigate something in parallel, or get independent takes on a question (e.g. "サブエージェントに調べさせて", "look into these in parallel and report back", "get independent takes on this question").
+description: Hand a bounded piece of work to a subagent under an explicit contract, then check what comes back. Use when asked to delegate a specific task to a subagent, whatever its kind — implementation, research, or brainstorming (e.g. "この作業を subagent に投げて", "サブエージェントに調べさせて", "delegate this refactor to a subagent", "have subagents look into these in parallel").
 ---
 
-# Delegate / Inquiry orchestration mode
+# Delegate
 
-You stay in the main loop as the lead for **inquiry work** — research,
-brainstorming, multi-angle investigation. You do not do all the digging
-yourself: each angle is delegated to a **worker subagent** spawned through
-your host's native subagent mechanism, and you **synthesize** their findings
-into one reconciled answer.
+Hand a **bounded piece of work** to a subagent under an explicit contract,
+spawned through your host's native subagent mechanism, and judge what comes
+back yourself. The work can be anything — a change, a question, a set of
+angles to brainstorm.
 
-This is `lead`'s sibling for work with nothing to implement. Where `lead`
-decomposes a coding task into write-scoped, test-verified units, `delegate`
-decomposes a question into independently-investigated angles, backed by
-evidence rather than a diff. Don't run both on the same task — decide which
-shape the work has first.
+The value is the **contract**: a narrow context, a stated acceptance
+condition, and lead-side judgement of the result. A handoff without an
+acceptance condition isn't delegation, it's hoping.
+
+This is a **single handoff** (one unit, or a small fan-out over one bounded
+piece of work) while you stay free to do everything else yourself. That's the
+seam with `lead`: `lead` is a whole-task posture — decompose the entire task,
+abstain from implementing any of it, review every unit — and it explicitly
+disclaims the single-unit case. Reach for `lead` when the whole task is being
+orchestrated; reach for `delegate` for one well-formed handoff.
 
 Do not shell out to a separate CLI process to delegate. Use the host's native
-in-session subagent primitive; if the host has none, fall back to
-investigating the angles serially yourself in the main loop.
+in-session subagent primitive; if the host has none, do the work yourself in
+the main loop.
 
 ## Steps
 
-1. **Frame the question.** Understand what's being asked and decide the
-   angles worth investigating independently — distinct hypotheses, source
-   classes, or perspectives, not the same question asked N times. If there's
-   really only one angle, or the answer is a quick lookup, just answer it —
-   do not orchestrate for its own sake.
+1. **Decide what to hand off.** Pick a piece with a boundary you can state.
+   If you can't state a checkable acceptance condition, either re-cut it or
+   keep it — a unit you can't judge on return is worse than no delegation. If
+   it's a quick lookup or a one-line edit, just do it; the handoff overhead
+   isn't worth it.
 
-2. **Decompose into inquiry contracts.** One per angle. You do not rely on
-   any pre-registered agent definition — **the contract travels inline in
-   the spawn prompt.** Each contract states:
-   - **What to investigate** — the question, hypothesis, or angle this unit
-     owns, distinct from the others' (see Independence below).
-   - **Acceptance evidence** — what must accompany the answer for it to be
-     usable: sources with dates for factual claims, observations kept
-     separate from inference, disconfirming evidence actively sought (not
-     only supporting evidence), and claims stated so they could be checked
-     or falsified. This replaces `lead`'s "Verify" — there is no test to
-     run, so the evidentiary bar has to be stated explicitly or the worker
-     will return a confident-sounding but unverifiable summary.
-   - **Constraints** — scope and source boundaries (e.g. files/paths/time
-     range/what not to assume), an explicit no-fabrication instruction, and
-     **read-only: investigate and report, do not edit files or commit** — a
-     worker reasoning about a question is prone to "helpfully" start
-     acting on it.
-   - **Independence** — this unit's hypothesis, source class, or angle,
-     stated so it's distinct from its siblings' rather than the same
-     question reframed. Assign these when you split the question in step 1:
-     identical framing plus the same sources produces correlated answers
-     that only look like independent confirmation.
-   - **Return** — a summary, the evidence behind it, and open
-     questions/caveats.
-   - **Stop and report** if the angle turns out to need something outside
-     its scope (e.g. it depends on another unit's answer) — do not widen
-     scope unilaterally.
-   If you cannot state a concrete evidentiary bar, re-cut the unit or answer
-   it yourself in the main loop.
+2. **Write the contract.** You do not rely on any pre-registered agent
+   definition — **the contract travels inline in the spawn prompt.** State:
+   - **What to do** — the target files/behavior for a change; the question,
+     hypothesis, or angle for an inquiry.
+   - **Done when** — a checkable completion condition. For a **change**, the
+     behavior or test that must hold. For an **inquiry**, state it as
+     **acceptance evidence**: sources with dates for factual claims,
+     observation kept separate from inference, disconfirming evidence
+     actively sought (not only supporting evidence), and claims stated so
+     they could be checked or falsified. There is no test to run for an
+     inquiry, so the evidentiary bar has to be explicit or the worker returns
+     a confident-sounding but unverifiable summary.
+   - **Scope** — for a change, the files/dirs the unit may modify. For an
+     inquiry, **read-only: investigate and report, do not edit files or
+     commit** — a worker reasoning about a question is prone to "helpfully"
+     start acting on it — plus any source or time boundaries.
+   - **Constraints / do not touch** — boundaries beyond scope: APIs or
+     patterns to preserve, what not to assume, and no fabrication.
+   - **Independence** — when several units attack the same question in
+     parallel, give each a distinct hypothesis, source class, or angle
+     rather than the same question reframed. Identical framing over the same
+     sources yields correlated answers that only look like independent
+     confirmation.
+   - **Verify** — for a change, the command(s) to run and the expected
+     evidence; if none apply (e.g. docs/config), say why. For an inquiry,
+     there's nothing to run — the acceptance evidence above is the
+     equivalent.
+   - **Return** — changed files and the validation result, or the summary
+     and the evidence behind it, plus any blockers or open questions.
+   - **Stop and report** if the work needs to expand beyond scope — do not
+     widen it unilaterally.
+   Keep it concise: reference the relevant files or commands rather than
+   restating them.
 
-3. **Delegate via the host's native subagent (adapter).** Same adapters as
-   `lead`:
+3. **Spawn via the host's native subagent (adapter).** Optionally pin a
+   cheaper model/effort, optionally isolate the workspace, then collect the
+   result. Model-pinning, parallelism, and isolation are **optional
+   capabilities** — use them where the host offers them, skip them where it
+   doesn't. The cells below are adapters, not guarantees: use each capability
+   only where the installed host version/config actually exposes it.
 
-   | Host | Spawn primitive | Cheaper model |
-   |------|-----------------|---------------|
-   | Claude Code | Agent tool (`subagent_type: "general-purpose"`) | `model:` in the call |
-   | Codex | `spawn_agent` + `send_message`/`wait_agent` | best-effort per-spawn `model`/`reasoning_effort` override, where exposed and available (use a **non-full-history** spawn; validated against the model catalog) |
-   | Copilot CLI | the `task` tool | `task` `model` override |
+   | Host | Spawn primitive | Cheaper model | Isolation |
+   |------|-----------------|---------------|-----------|
+   | Claude Code | Agent tool (`subagent_type: "general-purpose"`) | `model:` in the call | `isolation: "worktree"` |
+   | Codex | `spawn_agent` + `send_message`/`wait_agent` | best-effort per-spawn `model`/`reasoning_effort` override, where exposed and available (use a **non-full-history** spawn; validated against the model catalog) | none — workers share the workspace |
+   | Copilot CLI | the `task` tool | `task` `model` override | none by default |
 
    Use your host's **built-in** general subagent — the inline contract
    carries the full unit definition, so no custom agent setup is required.
-   The contract's read-only constraint (above) stands in for `lead`'s
-   write-scope isolation — there's nothing to isolate as long as the worker
-   respects it.
 
    `pi`'s subagents run as separate OS processes — the cross-process path
    this skill avoids. Unless your pi setup treats them as native in-session
-   delegation, fall back to serial main-loop investigation (above).
+   delegation, do the work in the main loop instead.
 
-   Units with no data dependency on each other may be dispatched
-   concurrently wherever the host supports it — a read-only worker can't
-   produce a shared-workspace write conflict. A unit that depends on
-   another's answer waits for it.
+   Parallelism: units with **no dependency** on each other may be dispatched
+   concurrently where the host supports it. Change units that share a
+   workspace (e.g. Codex) must have **disjoint write scopes**; only
+   parallelize across overlapping files where the host can isolate each
+   worker (e.g. Claude worktrees). Read-only inquiry units can't collide, so
+   they parallelize freely. A unit that depends on another's output waits for
+   it — never parallelize across a data dependency.
 
-   If your host also exposes a heavier multi-stage orchestration primitive
-   (e.g. Claude Code's Workflow tool), that is a separate, explicitly
-   invoked tool — not a branch inside this skill. Call it directly when the
-   task genuinely needs pipelining, barriers, or a judge panel across many
-   candidates. `delegate` covers the common case: a handful of angles,
-   investigated in parallel, synthesized once.
+4. **Judge the result yourself.** The worker's report is **input**, not an
+   accepted answer.
+   - For a change: check the diff and the evidence against the "done when".
+     If it isn't demonstrated, or scope leaked, send it back with a
+     **narrower** contract; don't fix it yourself unless it's a one-liner.
+   - For an inquiry: check the answer against its stated acceptance
+     evidence, and send back anything asserted without the evidence it
+     promised. Where parallel workers disagree, reconcile by weighing
+     evidence quality (source recency, directness, whether disconfirming
+     evidence was actually sought) — never by majority vote among workers.
+     Carry the residual uncertainty into your own answer rather than
+     laundering several confident summaries into one falsely-confident one.
 
-4. **Synthesize as lead — do not just relay.** A worker's report is
-   **input**, not an accepted final answer. When workers return, reconcile
-   them yourself:
-   - Check each against its stated acceptance evidence; a claim missing the
-     evidence it promised goes back with a narrower contract, the same way
-     `lead` sends back undemonstrated work.
-   - Where workers disagree, reconcile by weighing evidence quality (source
-     recency, directness, whether disconfirming evidence was actually
-     sought) — never by majority vote among the workers.
-   - State the synthesized answer's own uncertainty and open questions;
-     don't launder several confident-sounding worker summaries into one
-     falsely-confident answer.
-
-5. **No silent drops.** Every angle you started must be accounted for in
-   your final report: synthesized (with evidence), sent back, or abandoned
-   (with reason).
+   After a bounded number of retries, complete the unit yourself or report it
+   blocked — don't let a failing unit hang indefinitely. Every unit you
+   started must be accounted for: done (with evidence), sent back, or
+   abandoned (with reason).
 
 ## When NOT to use this
 
-- Implementation work — use `lead`; this skill is for questions, not diffs.
-- A single quick lookup with nothing to decompose — just answer it.
-- What you actually want is the **user's own decision or authorization**,
-  not another agent's opinion — don't launder a decision the user should
-  make through a subagent; ask them directly.
-- The task needs genuine multi-stage pipelining, barriers, or a judge panel
-  across many candidates — invoke your host's heavier orchestration tool
-  (e.g. Workflow) directly instead of forcing it through this contract
-  shape.
+- The **whole task** is being orchestrated — you're decomposing everything
+  and abstaining from the implementation yourself. That's `lead`.
+- A quick lookup or a one-line edit — the handoff overhead isn't worth it.
+- Work that needs your own full capability on every step — just do it in the
+  main loop.
+- What you actually want is the **user's own decision or authorization**, not
+  another agent's output — don't launder a decision the user should make
+  through a subagent; ask them directly.
+- The work needs genuine multi-stage pipelining, barriers, or a judge panel
+  across many candidates — invoke your host's heavier orchestration primitive
+  (e.g. Claude Code's Workflow tool) directly. That's a separate, explicitly
+  invoked tool, not a branch inside this skill.
 - You want a different provider's independent opinion on a plan you already
-  have — see `advise-herdr` instead.
+  have — see `advise-herdr`.

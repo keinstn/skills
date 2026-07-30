@@ -14,9 +14,9 @@ subagents, live elsewhere and are intentionally not published here.)
   Herdr pane, for an independent second opinion from a different provider
   before implementing.
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
-- **delegate** — Act as lead for inquiry work: decompose a research or
-  brainstorming question into independent angles, delegate each to a
-  subagent, and synthesize the reconciled answer.
+- **delegate** — Hand a bounded piece of work to a subagent under an
+  explicit contract — implementation, research, or anything else — then
+  judge the result yourself.
 - **flutter-ios-screenshots** — Capture App Store screenshots of a Flutter app
   on an iOS simulator at the size App Store Connect requires, with a clean
   status bar and no debug artifacts.
