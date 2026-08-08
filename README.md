@@ -24,7 +24,8 @@ subagents, live elsewhere and are intentionally not published here.)
   development retrospective, combining a data digest with follow-up
   questions to surface context the data alone can't.
 - **harness** — Set up a project's dev tooling (gitignore, lint/format config,
-  task runner, CI, hooks, tests) for whatever language the project uses.
+  task runner, CI, dependency automation, hooks, tests) for whatever language
+  the project uses.
 - **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
   implementation to subagents, and review.
 - **review-herdr** — Delegate code review to a new agent in a separate Herdr
