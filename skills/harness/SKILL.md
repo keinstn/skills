@@ -1,6 +1,6 @@
 ---
 name: harness
-description: Set up a project's dev tooling (gitignore, lint/format config, task runner, CI, Claude Code hooks, tests) for whatever language it uses. Use when asked to bootstrap dev tooling for a new or existing project (e.g. "harness を整備して", "set up the dev harness").
+description: Set up a project's dev tooling (gitignore, lint/format config, task runner, CI, dependency automation, Claude Code hooks, tests) for whatever language it uses. Use when asked to bootstrap dev tooling for a new or existing project (e.g. "harness を整備して", "set up the dev harness").
 ---
 
 # Dev Harness
@@ -73,15 +73,27 @@ memory — tool versions and MCP servers change fast.
    project's choice onto a different one. If wiring it up requires a global host
    install (`dart pub global activate ...`, `npm i -g ...`), confirm with the
    user first — it changes their machine, not just this repo — and record the
-   one-time command in the setup doc (pillar 10) regardless.
+   one-time command in the setup doc (pillar 11) regardless.
 8. **CI** (the project's CI platform, path-filtered per sub-project) — the stack's
    standard setup step, reading the pinned version from the project's own pin file
    rather than hardcoding one that drifts from local dev. Enable dependency/SDK
    caching unless there's a reason not to.
-9. **Tests** — confirm the test runner actually runs and passes on a trivial case;
+9. **Dependency automation** (`.github/dependabot.yml` or the platform's
+   equivalent) — one update block per (ecosystem, directory) pair found in
+   step 0, plus one for the CI platform's own actions if the repo has any
+   workflows. Name each ecosystem from the platform's current ecosystem list
+   rather than from the tool the project uses (e.g. a uv project is still
+   `pip`), and skip any whose manifest declares no dependencies at all, dev
+   included — a block that updates nothing is dead config. Where most
+   dependencies are toolchain (linters, bundlers, test runners), bundle them
+   into one PR via the platform's grouping mechanism, otherwise weekly bumps
+   become pure triage noise. This covers only what the package manager declares
+   — pins outside it (`.fvmrc`, `engines.node`, a CI `node-version`) stay
+   manual.
+10. **Tests** — confirm the test runner actually runs and passes on a trivial case;
    add a test helper mirroring this project's conventions only once a real case
    justifies it (don't scaffold empty dirs or unused parameters).
-10. **Setup doc** — a minimal `CLAUDE.md`/`README` covering one-time host setup
+11. **Setup doc** — a minimal `CLAUDE.md`/`README` covering one-time host setup
    (SDK/version manager, any globally-activated tools the harness assumes) so a
    fresh clone is usable. Setup only — not a product/architecture doc.
 
@@ -122,7 +134,9 @@ memory — tool versions and MCP servers change fast.
 - Copy a reference project's file verbatim without checking it's still accurate
   for *this* project's actual config (e.g. a hook tuned to another project's
   `page_width` setting is dead code here if this project sets none).
-- Expand the setup doc (pillar 10) into a product or architecture doc — keep it to
+- Expand the setup doc (pillar 11) into a product or architecture doc — keep it to
   one-time setup.
 - Stuff a slow test suite into pre-commit or make hooks blocking without asking —
   it drags every commit and isn't a substitute for CI.
+- Wire dependency automation into a repo with no manifests and no CI workflows —
+  there is nothing for it to update.
