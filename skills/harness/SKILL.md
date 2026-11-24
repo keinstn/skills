@@ -110,14 +110,14 @@ memory — tool versions and MCP servers change fast.
 - Verify each pillar with the stack's actual lint/test commands, and exercise what
   you can (run a task-runner recipe, trigger the hook) — not just "file exists".
 - **Scale delivery weight to the ask, same as implementation.** A substantial,
-  standalone harness setup goes through the `ship` skill (worktree → implement →
+  standalone harness setup goes through the `deliver` skill (worktree → implement →
   verify → review → commit/push/PR). A small addition to work already in flight
   (an open branch/PR, a mid-feature worktree) just gets committed there — don't
   spin up a new worktree+PR for one file. Either way, "set up the harness" alone
   doesn't authorize pushing and opening a PR — per the standing rule on
   consequential actions, confirm before push/PR unless the request already
   covers it (e.g. the user said "ship it," or you're adding to an already-open PR).
-- When it does go through `ship`, its review step matters here: harness changes
+- When it does go through `deliver`, its review step matters here: harness changes
   touch shell/CI/config surfaces that are easy to get subtly wrong (infinite
   loops in hook scripts, missing CI caching, wrong dependency section, dead
   config carried over from a reference project) — scale review effort to the

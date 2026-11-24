@@ -10,13 +10,12 @@ subagents, live elsewhere and are intentionally not published here.)
 
 ## Skills
 
-- **advise-herdr** — Delegate a plan or decision to a new agent in a separate
-  Herdr pane, for an independent second opinion from a different provider
-  before implementing.
 - **agent-task** — Create a GitHub issue formatted for an AI coding agent.
 - **delegate** — Hand a bounded piece of work to a subagent under an
   explicit contract — implementation, research, or anything else — then
   judge the result yourself.
+- **deliver** — Implement in a worktree, verify locally, then commit/push/PR and
+  review the diff.
 - **flutter-ios-screenshots** — Capture App Store screenshots of a Flutter app
   on an iOS simulator at the size App Store Connect requires, with a clean
   status bar and no debug artifacts.
@@ -28,12 +27,6 @@ subagents, live elsewhere and are intentionally not published here.)
   the project uses.
 - **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
   implementation to subagents, and review.
-- **review-herdr** — Delegate code review to a new agent in a separate Herdr
-  pane, for an independent second opinion from a different provider.
-- **ship** — Implement in a worktree, verify locally, then commit/push/PR and
-  review the diff.
-- **ship-herdr** — Delegate the `ship` workflow to a new agent in a separate
-  Herdr pane, for a different provider (e.g. codex) or a live-steerable pane.
 - **worktree** — Create a git worktree adjacent to the current repo before
   starting implementation.
 

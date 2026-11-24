@@ -127,5 +127,3 @@ the main loop.
   across many candidates — invoke your host's heavier orchestration primitive
   (e.g. Claude Code's Workflow tool) directly. That's a separate, explicitly
   invoked tool, not a branch inside this skill.
-- You want a different provider's independent opinion on a plan you already
-  have — see `advise-herdr`.
