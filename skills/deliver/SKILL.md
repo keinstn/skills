@@ -1,9 +1,9 @@
 ---
-name: ship
+name: deliver
 description: Implement in a worktree, verify locally, then commit/push/PR and review the diff. Use when asked to ship/deliver a change end-to-end (e.g. "ship して", "実装してPRまで作って").
 ---
 
-# Ship
+# Deliver
 
 Deliver a change end-to-end using whatever tooling the project actually has —
 don't assume a specific runner (`just`, `make`, `npm`, `uv`, etc.). Discover it
