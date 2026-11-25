@@ -25,6 +25,8 @@ subagents, live elsewhere and are intentionally not published here.)
 - **harness** — Set up a project's dev tooling (gitignore, lint/format config,
   task runner, CI, dependency automation, hooks, tests) for whatever language
   the project uses.
+- **herdr-core** — Coordinate agents and terminals (also across providers
+  and machines) with herdr-core's `hc` CLI; defers to `hc --skill` for usage.
 - **lead** — Act as lead/orchestrator: decompose work into contracts, delegate
   implementation to subagents, and review.
 - **worktree** — Create a git worktree adjacent to the current repo before
